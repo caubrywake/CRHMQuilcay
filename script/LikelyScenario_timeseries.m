@@ -9,9 +9,9 @@
 %% Set-up
 close all
 clear all
-cd 'F:\11_CRHM_cuchi\' % set to working folder
-addpath 'F:\11_CRHM_cuchi\script\' % local directory with CRHM model results
-figdir ='F:\11_CRHM_cuchi\fig\scenario\'
+cd 'G:\11_CRHM_cuchi\' % set to working folder
+addpath 'G:\11_CRHM_cuchi\script\' % local directory with CRHM model results
+figdir ='G:\11_CRHM_cuchi\fig\scenario\'
 
 hru_area = [1.528 1.322 1.237 0.839 7.366 4.056 3.492 3.663 3.201 4.633 9.491 2.721 2.418 2.008 6.249 10.62 1.903 0.14 0.45];
 ratio_area = hru_area./sum(hru_area);
@@ -23,14 +23,13 @@ sumarea = sum(hruarea)
 hru_glaciercover = [sum(hruarea([2,3,5,6,9])./sumarea) 0, hruarea(2)./sumarea hruarea(5)./sumarea sum(hruarea([2,5])./sumarea)]
 
 %% import the current ones
-load('CRHM\output\Cuchi_20230823.mat','SWEmelt', 'icemelt','firnmelt','hru_actet', 'infil', 'runoff','basinflow','basingw', 'time')
+
+load('G:\11_CRHM_cuchi\CRHM\output\v9\Cuchi_20230823.mat', 'SWEmelt', 'basinflow', 'basingw', 'firnmelt', 'icemelt', 'net_rain_org','hru_actet', 'time', 'hru_snow','hru_rain')
+rainfallrunoff_cur = sum(net_rain_org.*ratio_area,2);
 snowmelt_cur = sum(SWEmelt.*ratio_area,2)./24;
 icemelt_cur  = sum(icemelt.*ratio_area,2)./24 + sum(firnmelt.*ratio_area,2)./24;
 et_cur       = sum(hru_actet.*ratio_area, 2);
-infil    = sum(infil.*ratio_area, 2);
-runoff   = sum(runoff.*ratio_area, 2);
-rainfallrunoff_cur = (runoff + infil) -icemelt_cur;
-rainfallrunoff_cur(rainfallrunoff_cur<0)=0;
+
 
 T = timetable(time, basinflow/3600, basingw/3600);
 TT = retime(T, 'monthly','mean');
@@ -50,7 +49,7 @@ clear basinflow basingw firnmelt hru_actet icemelt SWEmelt T TT time t rainfallr
 % Import sceanrios the names of the files
 
 %% Future scenarios
-folderPath = 'CRHM\output\scenario\';  % Replace with the actual folder path
+folderPath = 'CRHM\output\scenario\v9\';  % Replace with the actual folder path
 files = dir(fullfile(folderPath, '*.txt'));  % Replace '*.txt' with the appropriate file extension
 % Extract file names and remove the first 8 letters
 fileName = {files.name};
@@ -70,10 +69,7 @@ S= B+G;
 snowmelt = sum(D.data(:,4:22).*ratio_area,2)./24;
 icemelt  = sum(D.data(:,42:60).*ratio_area,2)./24 + sum(D.data(:,23:41).*ratio_area,2)./24;
 et       = sum(D.data(:,61:79).*ratio_area, 2);
-infil    = sum(D.data(:,80:98).*ratio_area, 2);
-runoff   = sum(D.data(:,99: 117).*ratio_area, 2);
-rainfallrunoff = (runoff + infil) -icemelt ;
-rainfallrunoff(rainfallrunoff<0)=0;
+rainfallrunoff     = sum(D.data(:,80:98).*ratio_area, 2);
 time = D.data(:,1);
 time= datetime(datevec(time+ 693960));
 time = dateshift(time,'start','hour', 'nearest');
@@ -106,10 +102,8 @@ S= B+G;
 snowmelt = sum(D.data(:,4:22).*ratio_area,2)./24;
 icemelt  = sum(D.data(:,42:60).*ratio_area,2)./24 + sum(D.data(:,23:41).*ratio_area,2)./24;
 et       = sum(D.data(:,61:79).*ratio_area, 2);
-infil    = sum(D.data(:,80:98).*ratio_area, 2);
-runoff   = sum(D.data(:,99: 117).*ratio_area, 2);
-rainfallrunoff = (runoff + infil) -icemelt ;
-rainfallrunoff(rainfallrunoff<0)=0;
+rainfallrunoff     = sum(D.data(:,80:98).*ratio_area, 2);
+
 time = D.data(:,1);
 time= datetime(datevec(time+ 693960));
 time = dateshift(time,'start','hour', 'nearest');
@@ -142,10 +136,7 @@ S= B+G;
 snowmelt = sum(D.data(:,4:22).*ratio_area,2)./24;
 icemelt  = sum(D.data(:,42:60).*ratio_area,2)./24 + sum(D.data(:,23:41).*ratio_area,2)./24;
 et       = sum(D.data(:,61:79).*ratio_area, 2);
-infil    = sum(D.data(:,80:98).*ratio_area, 2);
-runoff   = sum(D.data(:,99: 117).*ratio_area, 2);
-rainfallrunoff = (runoff + infil) -icemelt ;
-rainfallrunoff(rainfallrunoff<0)=0;
+rainfallrunoff     = sum(D.data(:,80:98).*ratio_area, 2);
 time = D.data(:,1);
 time= datetime(datevec(time+ 693960));
 time = dateshift(time,'start','hour', 'nearest');
@@ -177,10 +168,7 @@ S= B+G;
 snowmelt = sum(D.data(:,4:22).*ratio_area,2)./24;
 icemelt  = sum(D.data(:,42:60).*ratio_area,2)./24 + sum(D.data(:,23:41).*ratio_area,2)./24;
 et       = sum(D.data(:,61:79).*ratio_area, 2);
-infil    = sum(D.data(:,80:98).*ratio_area, 2);
-runoff   = sum(D.data(:,99: 117).*ratio_area, 2);
-rainfallrunoff = (runoff + infil) -icemelt ;
-rainfallrunoff(rainfallrunoff<0)=0;
+rainfallrunoff     = sum(D.data(:,80:98).*ratio_area, 2);
 time = D.data(:,1);
 time= datetime(datevec(time+ 693960));
 time = dateshift(time,'start','hour', 'nearest');
@@ -257,7 +245,7 @@ plot (time_cur, B1, 'Color', c1);
 plot (time_cur, B2, 'Color', c1, 'LineStyle','--', 'LineWidth',ld);
 plot (time_cur, B3, 'Color', c3);
 plot (time_cur, B4, 'Color', c3, 'LineStyle','--', 'LineWidth',ld);
-ylabel ('Streamflow (m^3 s^{-1})')
+ylabel ('Overland and Vadose Flow (m^3 s^{-1})')
 xlim([datetime('26-Jun-2014') datetime('01-Mar-2020')])
 text (datetime('30-Jul-2014'), 3.7, '(e)');
 
@@ -267,7 +255,7 @@ plot (time_cur, G1, 'Color', c1, 'LineWidth',ld);
 plot (time_cur, G2, 'Color', c1, 'LineStyle','--', 'LineWidth',ld);
 plot (time_cur, G3, 'Color', c3, 'LineWidth',ld);
 plot (time_cur, G4, 'Color', c3, 'LineStyle','--', 'LineWidth',ld);
-ylabel ('Saturated zone flow (m^3 s^{-1})')
+ylabel ('Groundwater flow (m^3 s^{-1})')
 xlim([datetime('26-Jun-2014') datetime('01-Mar-2020')])
 text (datetime('30-Jul-2014'), 0.55, '(f)');
 
@@ -277,4 +265,16 @@ saveas (gcf, strcat( figdir, figname, '.pdf'));
 saveas (gcf, strcat(figdir, figname, '.png'));
 savefig(gcf, strcat(figdir, figname));
 
-
+%% calcukate the difference for exch year between B
+T = timetable (time_cur, b, B1, B2, B3, B4);
+TT = retime(T, 'yearly', 'sum');
+TT.bp = TT.b./TT.b * 100;
+TT.B1p = TT.B1./TT.b * 100;
+TT.B2p = TT.B2./TT.b * 100;
+TT.B3p = TT.B3./TT.b * 100;
+TT.B4p = TT.B4./TT.b * 100;
+yr = (2013:2020)
+figure
+bar(yr, [TT.b, TT.B1, TT.B2, TT.B3, TT.B4])
+figure
+bar(yr, [TT.B1p, TT.B2p, TT.B3p, TT.B4p])

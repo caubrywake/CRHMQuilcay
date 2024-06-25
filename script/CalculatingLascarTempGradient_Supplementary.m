@@ -7,9 +7,9 @@
 % supplementray 1. 
 close all
 clear all
-figdir = 'D:\11_CRHM_cuchi\fig\obs\'
+figdir = 'G:\11_CRHM_cuchi\fig\obs\v2\'
 
-folderPath = 'D:\11_CRHM_cuchi\data\lascar\';  % find the met files
+folderPath = 'G:\11_CRHM_cuchi\data\lascar\';  % find the met files
 files = dir([folderPath '*.csv']);  % Get a list of all CSV files in the folder
 
 numFiles = numel(files); % Get the number of CSV files
@@ -32,9 +32,17 @@ plot(dd_m.Datetime, dd_m.Temperature__C_); hold on
 end
 
 % use only (1,3,5,8)
+
+figure('Position', [100, 100, 800, 400]); % [left, bottom, width, height]
 plot(tt, data(:,[1,3,5,8]))
 legend ('4355 m','3955 m','4122 m','4561 m')
 ylabel({'Monthly Air Temperature ({\circ}C)'});
+
+xt = datetime(min(tt), 'Format', 'MMM-yyyy'):calmonths(6):datetime('01-Jul-2016', 'Format', 'MMM-yyyy');
+xticks(xt)
+datetick('x', 'mmm-yyyy', 'keepticks')
+hold on
+
 figname ='Lascar_monthlyTemp';
 saveas (gcf, strcat( figdir, figname, '.pdf'))
 saveas (gcf, strcat(figdir, figname, '.png'))
@@ -42,6 +50,7 @@ savefig(gcf, strcat(figdir, figname))
 
 elev = [4355,3955,4122,4561]
 
+figure('Position', [100, 100, 800, 400]); % [left, bottom, width, height]
 
 for i = 1:length(data)
 coefficients = polyfit(elev*1000, data(i,[1,3,5,8]), 1);
@@ -55,12 +64,19 @@ end
 lsline
 ylabel({'Monthly Air Temperature ({\circ}C)'});
 xlabel('Elevations (m.a.s.l.)')
+box on
+grid on
 figname ='Lascar_TempGradient';
 saveas (gcf, strcat( figdir, figname, '.pdf'))
 saveas (gcf, strcat(figdir, figname, '.png'))
 savefig(gcf, strcat(figdir, figname))
 
-figure 
+
+
+%%
+
+
+figure('Position', [100, 100, 800, 400]); % [left, bottom, width, height]
 plot(tt, gradient)
 months = month(tt)
 for i = 1:12
@@ -76,22 +92,30 @@ x = [1:12]
 y = meangrad;
 errlow = meanstd;
 errhigh=errlow;
-figure
+% Define the month names
+mt = {'January'; 'February'; 'March'; 'April'; 'May'; 'June'; 'July'; 'August'; 'September'; 'October'; 'November'; 'December'};
 
-er = errorbar(x,y,errlow);    
-er.Color = [0 0 0 ];                            
-ylabel({'Monthly Air Temperature Gradient({\circ}C m{^-1})'});
-xlabel('Months')
-xlim([0.5 12.5])
-figname ='Lascar_TempGradient_monthly';
-saveas (gcf, strcat( figdir, figname, '.pdf'))
-saveas (gcf, strcat(figdir, figname, '.png'))
-savefig(gcf, strcat(figdir, figname))
+% Create the figure and plot the error bars
+figure('Position', [100, 100, 800, 400]); % [left, bottom, width, height]
+er = errorbar(x, y, errlow);    
+er.Color = [0 0 0];                            
+ylabel({'Monthly Air Temperature Gradient ({\circ}C m^{-1})'});
+xlabel('Months');
 
-mt ={'January'; 'February'; 'March'; 'April'; 'May'; 'June'; 'July'; 'August'; 'September'; 'October'; 'November'; 'December'}
+% Set the x-ticks and x-tick labels
+xticks(1:12);
+xticklabels(mt);
 
+% Set x-axis limits
+xlim([0.5 12.5]);
 
-savedir = 'D:\11_CRHM_cuchi\data\processed\'
+% Save the figure
+figname = 'Lascar_TempGradient_monthly';
+saveas(gcf, fullfile(figdir, strcat(figname, '.pdf')));
+saveas(gcf, fullfile(figdir, strcat(figname, '.png')));
+savefig(gcf, fullfile(figdir, figname));
+
+savedir = 'G:\11_CRHM_cuchi\data\processed\'
 t = table(mt, meangrad')
 t.Properties.VariableNames= {'Month', 'TempGradident_C_m'};
 writetable(t, strcat(savedir, 'Lascar_MonthlyTempGradident.csv'));
